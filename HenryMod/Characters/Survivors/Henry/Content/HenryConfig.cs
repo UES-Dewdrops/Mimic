@@ -1,9 +1,9 @@
 ﻿using BepInEx.Configuration;
-using HenryMod.Modules;
+using MimicMod.Modules;
 
-namespace HenryMod.Survivors.Henry
+namespace MimicMod.Survivors.Mimic
 {
-    public static class HenryConfig
+    public static class MimicConfig
     {
         public static ConfigEntry<bool> someConfigBool;
         public static ConfigEntry<float> someConfigFloat;
@@ -11,7 +11,7 @@ namespace HenryMod.Survivors.Henry
 
         public static void Init()
         {
-            string section = "Henry";
+            string section = "Mimic";
 
             someConfigBool = Config.BindAndOptions(
                 section,

@@ -1,4 +1,4 @@
-﻿namespace HenryMod.Modules
+﻿namespace MimicMod.Modules
 {
     internal static class Tokens
     {

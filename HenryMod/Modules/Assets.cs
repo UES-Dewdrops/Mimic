@@ -9,7 +9,7 @@ using RoR2.UI;
 using RoR2.Projectile;
 using Path = System.IO.Path;
 
-namespace HenryMod.Modules
+namespace MimicMod.Modules
 {
     internal static class Assets
     {
@@ -33,7 +33,7 @@ namespace HenryMod.Modules
             AssetBundle assetBundle = null;
             try
             {
-                assetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(HenryPlugin.instance.Info.Location), "AssetBundles", bundleName));
+                assetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(MimicPlugin.instance.Info.Location), "AssetBundles", bundleName));
             }
             catch (System.Exception e)
             {

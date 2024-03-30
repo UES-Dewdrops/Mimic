@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace HenryMod.Survivors.Henry.Components
+namespace MimicMod.Survivors.Mimic.Components
 {
-    internal class HenryWeaponComponent : MonoBehaviour
+    internal class MimicWeaponComponent : MonoBehaviour
     {
         private void Awake()
         {

@@ -1,7 +1,7 @@
 ﻿using EntityStates;
 using System;
 
-namespace HenryMod.Modules.BaseStates
+namespace MimicMod.Modules.BaseStates
 {
     //see example skills below
     public class BaseTimedSkillState : BaseSkillState

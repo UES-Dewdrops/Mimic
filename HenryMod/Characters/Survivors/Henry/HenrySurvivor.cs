@@ -1,43 +1,44 @@
 ﻿using BepInEx.Configuration;
-using HenryMod.Modules;
-using HenryMod.Modules.Characters;
-using HenryMod.Survivors.Henry.Components;
-using HenryMod.Survivors.Henry.SkillStates;
+using MimicMod.Modules;
+using MimicMod.Modules.Characters;
+using MimicMod.SkillStates.Primary;
+using MimicMod.SkillStates.Secondary;
+using MimicMod.SkillStates.Special;
+using MimicMod.SkillStates.Utility;
+using MimicMod.Survivors.Mimic.Components;
+using MimicMod.Survivors.Mimic.SkillStates;
 using RoR2;
 using RoR2.Skills;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HenryMod.Survivors.Henry
+namespace MimicMod.Survivors.Mimic
 {
-    public class HenrySurvivor : SurvivorBase<HenrySurvivor>
+    public class MimicSurvivor : SurvivorBase<MimicSurvivor>
     {
-        //used to load the assetbundle for this character. must be unique
-        public override string assetBundleName => "myassetbundle"; //if you do not change this, you are giving permission to deprecate the mod
+        public override string assetBundleName => "mimicassetbundle"; 
 
-        //the name of the prefab we will create. conventionally ending in "Body". must be unique
-        public override string bodyName => "HenryBody"; //if you do not change this, you get the point by now
+        public override string bodyName => "MimicBody"; 
 
-        //name of the ai master for vengeance and goobo. must be unique
-        public override string masterName => "HenryMonsterMaster"; //if you do not
+        public override string masterName => "MimicMonsterMaster";
 
         //the names of the prefabs you set up in unity that we will use to build your character
         public override string modelPrefabName => "mdlHenry";
         public override string displayPrefabName => "HenryDisplay";
 
-        public const string HENRY_PREFIX = HenryPlugin.DEVELOPER_PREFIX + "_HENRY_";
+        public const string Mimic_PREFIX = MimicPlugin.DEVELOPER_PREFIX + "_Mimic_";
 
         //used when registering your survivor's language tokens
-        public override string survivorTokenPrefix => HENRY_PREFIX;
+        public override string survivorTokenPrefix => Mimic_PREFIX;
         
         public override BodyInfo bodyInfo => new BodyInfo
         {
             bodyName = bodyName,
-            bodyNameToken = HENRY_PREFIX + "NAME",
-            subtitleNameToken = HENRY_PREFIX + "SUBTITLE",
+            bodyNameToken = Mimic_PREFIX + "NAME",
+            subtitleNameToken = Mimic_PREFIX + "SUBTITLE",
 
-            characterPortrait = assetBundle.LoadAsset<Texture>("texHenryIcon"),
+            characterPortrait = assetBundle.LoadAsset<Texture>("texMimicIcon"),
             bodyColor = Color.white,
             sortPosition = 100,
 
@@ -68,9 +69,9 @@ namespace HenryMod.Survivors.Henry
                 }
         };
 
-        public override UnlockableDef characterUnlockableDef => HenryUnlockables.characterUnlockableDef;
+        public override UnlockableDef characterUnlockableDef => MimicUnlockables.characterUnlockableDef;
         
-        public override ItemDisplaysBase itemDisplays => new HenryItemDisplays();
+        public override ItemDisplaysBase itemDisplays => new MimicItemDisplays();
 
         //set in base classes
         public override AssetBundle assetBundle { get; protected set; }
@@ -84,7 +85,7 @@ namespace HenryMod.Survivors.Henry
         public override void Initialize()
         {
             //uncomment if you have multiple characters
-            //ConfigEntry<bool> characterEnabled = Config.CharacterEnableConfig("Survivors", "Henry");
+            //ConfigEntry<bool> characterEnabled = Config.CharacterEnableConfig("Survivors", "Mimic");
 
             //if (!characterEnabled.Value)
             //    return;
@@ -95,16 +96,16 @@ namespace HenryMod.Survivors.Henry
         public override void InitializeCharacter()
         {
             //need the character unlockable before you initialize the survivordef
-            HenryUnlockables.Init();
+            MimicUnlockables.Init();
 
             base.InitializeCharacter();
 
-            HenryConfig.Init();
-            HenryStates.Init();
-            HenryTokens.Init();
+            MimicConfig.Init();
+            MimicStates.Init();
+            MimicTokens.Init();
 
-            HenryAssets.Init(assetBundle);
-            HenryBuffs.Init(assetBundle);
+            MimicAssets.Init(assetBundle);
+            MimicBuffs.Init(assetBundle);
 
             InitializeEntityStateMachines();
             InitializeSkills();
@@ -119,7 +120,7 @@ namespace HenryMod.Survivors.Henry
         private void AdditionalBodySetup()
         {
             AddHitboxes();
-            bodyPrefab.AddComponent<HenryWeaponComponent>();
+            bodyPrefab.AddComponent<MimicWeaponComponent>();
             //bodyPrefab.AddComponent<HuntressTrackerComopnent>();
             //anything else here
         }
@@ -139,7 +140,7 @@ namespace HenryMod.Survivors.Henry
             //the main "Body" state machine has some special properties
             Prefabs.AddMainEntityStateMachine(bodyPrefab, "Body", typeof(EntityStates.GenericCharacterMain), typeof(EntityStates.SpawnTeleporterState));
             //if you set up a custom main characterstate, set it up here
-                //don't forget to register custom entitystates in your HenryStates.cs
+                //don't forget to register custom entitystates in your MimicStates.cs
 
             Prefabs.AddEntityStateMachine(bodyPrefab, "Weapon");
             Prefabs.AddEntityStateMachine(bodyPrefab, "Weapon2");
@@ -166,8 +167,8 @@ namespace HenryMod.Survivors.Henry
             bodyPrefab.GetComponent<SkillLocator>().passiveSkill = new SkillLocator.PassiveSkill
             {
                 enabled = true,
-                skillNameToken = HENRY_PREFIX + "PASSIVE_NAME",
-                skillDescriptionToken = HENRY_PREFIX + "PASSIVE_DESCRIPTION",
+                skillNameToken = Mimic_PREFIX + "PASSIVE_NAME",
+                skillDescriptionToken = Mimic_PREFIX + "PASSIVE_DESCRIPTION",
                 keywordToken = "KEYWORD_STUNNING",
                 icon = assetBundle.LoadAsset<Sprite>("texPassiveIcon"),
             };
@@ -176,36 +177,11 @@ namespace HenryMod.Survivors.Henry
             GenericSkill passiveGenericSkill = Skills.CreateGenericSkillWithSkillFamily(bodyPrefab, "PassiveSkill");
             SkillDef passiveSkillDef1 = Skills.CreateSkillDef(new SkillDefInfo
             {
-                skillName = "HenryPassive",
-                skillNameToken = HENRY_PREFIX + "PASSIVE_NAME",
-                skillDescriptionToken = HENRY_PREFIX + "PASSIVE_DESCRIPTION",
+                skillName = "MimicPassive",
+                skillNameToken = Mimic_PREFIX + "PASSIVE_NAME",
+                skillDescriptionToken = Mimic_PREFIX + "PASSIVE_DESCRIPTION",
                 keywordTokens = new string[] { "KEYWORD_AGILE" },
                 skillIcon = assetBundle.LoadAsset<Sprite>("texPassiveIcon"),
-
-                //unless you're somehow activating your passive like a skill, none of the following is needed.
-                //but that's just me saying things. the tools are here at your disposal to do whatever you like with
-
-                //activationState = new EntityStates.SerializableEntityStateType(typeof(SkillStates.Shoot)),
-                //activationStateMachineName = "Weapon1",
-                //interruptPriority = EntityStates.InterruptPriority.Skill,
-
-                //baseRechargeInterval = 1f,
-                //baseMaxStock = 1,
-
-                //rechargeStock = 1,
-                //requiredStock = 1,
-                //stockToConsume = 1,
-
-                //resetCooldownTimerOnUse = false,
-                //fullRestockOnAssign = true,
-                //dontAllowPastMaxStocks = false,
-                //mustKeyPress = false,
-                //beginSkillCooldownOnSkillEnd = false,
-
-                //isCombatSkill = true,
-                //canceledFromSprinting = false,
-                //cancelSprintingOnActivation = false,
-                //forceSprintDuringState = false,
 
             });
             Skills.AddSkillsToFamily(passiveGenericSkill.skillFamily, passiveSkillDef1);
@@ -216,63 +192,90 @@ namespace HenryMod.Survivors.Henry
         {
             Skills.CreateGenericSkillWithSkillFamily(bodyPrefab, SkillSlot.Primary);
 
-            //the primary skill is created using a constructor for a typical primary
-            //it is also a SteppedSkillDef. Custom Skilldefs are very useful for custom behaviors related to casting a skill. see ror2's different skilldefs for reference
-            SteppedSkillDef primarySkillDef1 = Skills.CreateSkillDef<SteppedSkillDef>(new SkillDefInfo
-                (
-                    "HenrySlash",
-                    HENRY_PREFIX + "PRIMARY_SLASH_NAME",
-                    HENRY_PREFIX + "PRIMARY_SLASH_DESCRIPTION",
-                    assetBundle.LoadAsset<Sprite>("texPrimaryIcon"),
-                    new EntityStates.SerializableEntityStateType(typeof(SkillStates.SlashCombo)),
-                    "Weapon",
-                    true
-                ));
-            //custom Skilldefs can have additional fields that you can set manually
-            primarySkillDef1.stepCount = 2;
-            primarySkillDef1.stepGraceDuration = 0.5f;
+            SkillDef shootSkillDef = Skills.CreateSkillDef(new SkillDefInfo
+            {
+                skillName = Mimic_PREFIX + "_HENRY_BODY_PRIMARY_GUN_NAME",
+                skillNameToken = Mimic_PREFIX + "_HENRY_BODY_PRIMARY_GUN_NAME",
+                skillDescriptionToken = Mimic_PREFIX + "_HENRY_BODY_PRIMARY_GUN_DESCRIPTION",
+                skillIcon = assetBundle.LoadAsset<Sprite>("texSecondaryIcon"),
+                activationState = new EntityStates.SerializableEntityStateType(typeof(TarShotgun)),
+                activationStateMachineName = "Slide",
+                baseMaxStock = 1,
+                baseRechargeInterval = 0.90f,
+                beginSkillCooldownOnSkillEnd = false,
+                canceledFromSprinting = true, // false
+                forceSprintDuringState = false,
+                fullRestockOnAssign = true,
+                interruptPriority = EntityStates.InterruptPriority.Skill,
+                resetCooldownTimerOnUse = false,
+                isCombatSkill = true,
+                mustKeyPress = false,
+                cancelSprintingOnActivation = true, // false
+                rechargeStock = 1,
+                requiredStock = 1,
+                stockToConsume = 1
+            });
 
-            Skills.AddPrimarySkills(bodyPrefab, primarySkillDef1);
+
+            Skills.AddPrimarySkills(bodyPrefab, shootSkillDef);
         }
 
         private void AddSecondarySkills()
         {
             Skills.CreateGenericSkillWithSkillFamily(bodyPrefab, SkillSlot.Secondary);
 
-            //here is a basic skill def with all fields accounted for
-            SkillDef secondarySkillDef1 = Skills.CreateSkillDef(new SkillDefInfo
+            SkillDef fireBombSkillDef = Skills.CreateSkillDef(new SkillDefInfo
             {
-                skillName = "HenryGun",
-                skillNameToken = HENRY_PREFIX + "SECONDARY_GUN_NAME",
-                skillDescriptionToken = HENRY_PREFIX + "SECONDARY_GUN_DESCRIPTION",
-                keywordTokens = new string[] { "KEYWORD_AGILE" },
-                skillIcon = assetBundle.LoadAsset<Sprite>("texSecondaryIcon"),
-
-                activationState = new EntityStates.SerializableEntityStateType(typeof(SkillStates.Shoot)),
-                activationStateMachineName = "Weapon2",
-                interruptPriority = EntityStates.InterruptPriority.Skill,
-
-                baseRechargeInterval = 1f,
+                skillName = Mimic_PREFIX + "_HENRY_BODY_SECONDARY_BOMB_NAME",
+                skillNameToken = Mimic_PREFIX + "_HENRY_BODY_SECONDARY_BOMB_NAME",
+                skillDescriptionToken = Mimic_PREFIX + "_HENRY_BODY_SECONDARY_BOMB_DESCRIPTION",
+                skillIcon = assetBundle.LoadAsset<Sprite>("texSpecialIcon"),
+                activationState = new EntityStates.SerializableEntityStateType(typeof(ThrowFireBomb)),
+                activationStateMachineName = "Slide",
                 baseMaxStock = 1,
-
+                baseRechargeInterval = 5f,
+                beginSkillCooldownOnSkillEnd = false,
+                canceledFromSprinting = false,
+                forceSprintDuringState = false,
+                fullRestockOnAssign = true,
+                interruptPriority = EntityStates.InterruptPriority.Skill,
+                resetCooldownTimerOnUse = false,
+                isCombatSkill = true,
+                mustKeyPress = false,
+                cancelSprintingOnActivation = true,
                 rechargeStock = 1,
                 requiredStock = 1,
-                stockToConsume = 1,
-
-                resetCooldownTimerOnUse = false,
-                fullRestockOnAssign = true,
-                dontAllowPastMaxStocks = false,
-                mustKeyPress = false,
-                beginSkillCooldownOnSkillEnd = false,
-
-                isCombatSkill = true,
-                canceledFromSprinting = false,
-                cancelSprintingOnActivation = false,
-                forceSprintDuringState = false,
-
+                stockToConsume = 1
             });
 
-            Skills.AddSecondarySkills(bodyPrefab, secondarySkillDef1);
+            Skills.AddSecondarySkills(bodyPrefab, fireBombSkillDef);
+
+            SkillDef tarBombSkillDef = Skills.CreateSkillDef(new SkillDefInfo
+            {
+                skillName = Mimic_PREFIX + "_HENRY_BODY_SECONDARY_BOMB_NAME",
+                skillNameToken = Mimic_PREFIX + "_HENRY_BODY_SECONDARY_BOMB_NAME",
+                skillDescriptionToken = Mimic_PREFIX + "_HENRY_BODY_SECONDARY_BOMB_DESCRIPTION",
+                skillIcon = assetBundle.LoadAsset<Sprite>("texSpecialIcon"),
+                activationState = new EntityStates.SerializableEntityStateType(typeof(ThrowTarBomb)),
+                activationStateMachineName = "Slide",
+                baseMaxStock = 1,
+                baseRechargeInterval = 5f,
+                beginSkillCooldownOnSkillEnd = false,
+                canceledFromSprinting = false,
+                forceSprintDuringState = false,
+                fullRestockOnAssign = true,
+                interruptPriority = EntityStates.InterruptPriority.Skill,
+                resetCooldownTimerOnUse = false,
+                isCombatSkill = true,
+                mustKeyPress = false,
+                cancelSprintingOnActivation = true,
+                rechargeStock = 1,
+                requiredStock = 1,
+                stockToConsume = 1
+            });
+
+            Skills.AddSecondarySkills(bodyPrefab, tarBombSkillDef);
+
         }
 
         private void AddUtiitySkills()
@@ -282,13 +285,13 @@ namespace HenryMod.Survivors.Henry
             //here's a skilldef of a typical movement skill.
             SkillDef utilitySkillDef1 = Skills.CreateSkillDef(new SkillDefInfo
             {
-                skillName = "HenryRoll",
-                skillNameToken = HENRY_PREFIX + "UTILITY_ROLL_NAME",
-                skillDescriptionToken = HENRY_PREFIX + "UTILITY_ROLL_DESCRIPTION",
+                skillName = "MimicRoll",
+                skillNameToken = Mimic_PREFIX + "UTILITY_ROLL_NAME",
+                skillDescriptionToken = Mimic_PREFIX + "UTILITY_ROLL_DESCRIPTION",
                 skillIcon = assetBundle.LoadAsset<Sprite>("texUtilityIcon"),
 
                 activationState = new EntityStates.SerializableEntityStateType(typeof(Roll)),
-                activationStateMachineName = "Body",
+                activationStateMachineName = "Slide",
                 interruptPriority = EntityStates.InterruptPriority.PrioritySkill,
 
                 baseRechargeInterval = 4f,
@@ -306,8 +309,8 @@ namespace HenryMod.Survivors.Henry
 
                 isCombatSkill = false,
                 canceledFromSprinting = false,
-                cancelSprintingOnActivation = false,
-                forceSprintDuringState = true,
+                cancelSprintingOnActivation = true,
+                forceSprintDuringState = false,
             });
 
             Skills.AddUtilitySkills(bodyPrefab, utilitySkillDef1);
@@ -317,26 +320,57 @@ namespace HenryMod.Survivors.Henry
         {
             Skills.CreateGenericSkillWithSkillFamily(bodyPrefab, SkillSlot.Special);
 
-            //a basic skill. some fields are omitted and will just have default values
-            SkillDef specialSkillDef1 = Skills.CreateSkillDef(new SkillDefInfo
+            SkillDef chestRetreatSkillDef = Skills.CreateSkillDef(new SkillDefInfo
             {
-                skillName = "HenryBomb",
-                skillNameToken = HENRY_PREFIX + "SPECIAL_BOMB_NAME",
-                skillDescriptionToken = HENRY_PREFIX + "SPECIAL_BOMB_DESCRIPTION",
-                skillIcon = assetBundle.LoadAsset<Sprite>("texSpecialIcon"),
-
-                activationState = new EntityStates.SerializableEntityStateType(typeof(SkillStates.ThrowBomb)),
-                //setting this to the "weapon2" EntityStateMachine allows us to cast this skill at the same time primary, which is set to the "weapon" EntityStateMachine
-                activationStateMachineName = "Weapon2", interruptPriority = EntityStates.InterruptPriority.Skill,
-
+                skillName = Mimic_PREFIX + "_HENRY_BODY_SPECIAL_CHEST_SLAM_NAME",
+                skillNameToken = Mimic_PREFIX + "_HENRY_BODY_SPECIAL_CHEST_SLAM_NAME",
+                skillDescriptionToken = Mimic_PREFIX + "_HENRY_BODY_SPECIAL_CHEST_SLAM_DESCRIPTION",
+                skillIcon = assetBundle.LoadAsset<Sprite>("texUtilityIcon"),
+                activationState = new EntityStates.SerializableEntityStateType(typeof(ChestRetreat)),
+                activationStateMachineName = "Body",
                 baseMaxStock = 1,
-                baseRechargeInterval = 10f,
-
-                isCombatSkill = true,
+                baseRechargeInterval = 7f,
+                beginSkillCooldownOnSkillEnd = false,
+                canceledFromSprinting = false,
+                forceSprintDuringState = false,
+                fullRestockOnAssign = true,
+                interruptPriority = EntityStates.InterruptPriority.PrioritySkill,
+                resetCooldownTimerOnUse = false,
+                isCombatSkill = false,
                 mustKeyPress = false,
+                cancelSprintingOnActivation = true,
+                rechargeStock = 1,
+                requiredStock = 1,
+                stockToConsume = 1
             });
 
-            Skills.AddSpecialSkills(bodyPrefab, specialSkillDef1);
+            SkillDef chestSapSkillDef = Skills.CreateSkillDef(new SkillDefInfo
+            {
+                skillName = Mimic_PREFIX + "_HENRY_BODY_SPECIAL_CHEST_SLAM_NAME",
+                skillNameToken = Mimic_PREFIX + "_HENRY_BODY_SPECIAL_CHEST_SLAM_NAME",
+                skillDescriptionToken = Mimic_PREFIX + "_HENRY_BODY_SPECIAL_CHEST_SLAM_DESCRIPTION",
+                skillIcon = assetBundle.LoadAsset<Sprite>("texUtilityIcon"),
+                activationState = new EntityStates.SerializableEntityStateType(typeof(ChestSap)),
+                activationStateMachineName = "Body",
+                baseMaxStock = 1,
+                baseRechargeInterval = 7f,
+                beginSkillCooldownOnSkillEnd = false,
+                canceledFromSprinting = true,
+                forceSprintDuringState = false,
+                fullRestockOnAssign = true,
+                interruptPriority = EntityStates.InterruptPriority.PrioritySkill,
+                resetCooldownTimerOnUse = false,
+                isCombatSkill = false,
+                mustKeyPress = false,
+                cancelSprintingOnActivation = true,
+                rechargeStock = 1,
+                requiredStock = 1,
+                stockToConsume = 1
+            });
+
+            Skills.AddSpecialSkills(bodyPrefab, chestRetreatSkillDef);
+            Skills.AddSpecialSkills(bodyPrefab, chestSapSkillDef);
+
         }
         #endregion skills
         
@@ -362,9 +396,9 @@ namespace HenryMod.Survivors.Henry
             //currently not needed as with only 1 skin they will simply take the default meshes
                 //uncomment this when you have another skin
             //defaultSkin.meshReplacements = Modules.Skins.getMeshReplacements(assetBundle, defaultRendererinfos,
-            //    "meshHenrySword",
-            //    "meshHenryGun",
-            //    "meshHenry");
+            //    "meshMimicSword",
+            //    "meshMimicGun",
+            //    "meshMimic");
 
             //add new skindef to our list of skindefs. this is what we'll be passing to the SkinController
             skins.Add(defaultSkin);
@@ -374,24 +408,24 @@ namespace HenryMod.Survivors.Henry
             #region MasterySkin
             
             ////creating a new skindef as we did before
-            //SkinDef masterySkin = Modules.Skins.CreateSkinDef(HENRY_PREFIX + "MASTERY_SKIN_NAME",
+            //SkinDef masterySkin = Modules.Skins.CreateSkinDef(Mimic_PREFIX + "MASTERY_SKIN_NAME",
             //    assetBundle.LoadAsset<Sprite>("texMasteryAchievement"),
             //    defaultRendererinfos,
             //    prefabCharacterModel.gameObject,
-            //    HenryUnlockables.masterySkinUnlockableDef);
+            //    MimicUnlockables.masterySkinUnlockableDef);
 
             ////adding the mesh replacements as above. 
             ////if you don't want to replace the mesh (for example, you only want to replace the material), pass in null so the order is preserved
             //masterySkin.meshReplacements = Modules.Skins.getMeshReplacements(assetBundle, defaultRendererinfos,
-            //    "meshHenrySwordAlt",
+            //    "meshMimicSwordAlt",
             //    null,//no gun mesh replacement. use same gun mesh
-            //    "meshHenryAlt");
+            //    "meshMimicAlt");
 
             ////masterySkin has a new set of RendererInfos (based on default rendererinfos)
             ////you can simply access the RendererInfos' materials and set them to the new materials for your skin.
-            //masterySkin.rendererInfos[0].defaultMaterial = assetBundle.LoadMaterial("matHenryAlt");
-            //masterySkin.rendererInfos[1].defaultMaterial = assetBundle.LoadMaterial("matHenryAlt");
-            //masterySkin.rendererInfos[2].defaultMaterial = assetBundle.LoadMaterial("matHenryAlt");
+            //masterySkin.rendererInfos[0].defaultMaterial = assetBundle.LoadMaterial("matMimicAlt");
+            //masterySkin.rendererInfos[1].defaultMaterial = assetBundle.LoadMaterial("matMimicAlt");
+            //masterySkin.rendererInfos[2].defaultMaterial = assetBundle.LoadMaterial("matMimicAlt");
 
             ////here's a barebones example of using gameobjectactivations that could probably be streamlined or rewritten entirely, truthfully, but it works
             //masterySkin.gameObjectActivations = new SkinDef.GameObjectActivation[]
@@ -421,7 +455,7 @@ namespace HenryMod.Survivors.Henry
             //Modules.Prefabs.CloneDopplegangerMaster(bodyPrefab, masterName, "Merc");
 
             //how to set up AI in code
-            HenryAI.Init(bodyPrefab, masterName);
+            MimicAI.Init(bodyPrefab, masterName);
 
             //how to load a master set up in unity, can be an empty gameobject with just AISkillDriver components
             //assetBundle.LoadMaster(bodyPrefab, masterName);
@@ -435,7 +469,7 @@ namespace HenryMod.Survivors.Henry
         private void RecalculateStatsAPI_GetStatCoefficients(CharacterBody sender, R2API.RecalculateStatsAPI.StatHookEventArgs args)
         {
 
-            if (sender.HasBuff(HenryBuffs.armorBuff))
+            if (sender.HasBuff(MimicBuffs.armorBuff))
             {
                 args.armorAdd += 300;
             }

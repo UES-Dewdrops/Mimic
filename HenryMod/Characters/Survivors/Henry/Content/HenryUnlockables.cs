@@ -1,10 +1,10 @@
-﻿using HenryMod.Survivors.Henry.Achievements;
+﻿using MimicMod.Survivors.Mimic.Achievements;
 using RoR2;
 using UnityEngine;
 
-namespace HenryMod.Survivors.Henry
+namespace MimicMod.Survivors.Mimic
 {
-    public static class HenryUnlockables
+    public static class MimicUnlockables
     {
         public static UnlockableDef characterUnlockableDef = null;
         public static UnlockableDef masterySkinUnlockableDef = null;
@@ -12,9 +12,9 @@ namespace HenryMod.Survivors.Henry
         public static void Init()
         {
             masterySkinUnlockableDef = Modules.Content.CreateAndAddUnlockbleDef(
-                HenryMasteryAchievement.unlockableIdentifier,
-                Modules.Tokens.GetAchievementNameToken(HenryMasteryAchievement.identifier),
-                HenrySurvivor.instance.assetBundle.LoadAsset<Sprite>("texMasteryAchievement"));
+                MimicMasteryAchievement.unlockableIdentifier,
+                Modules.Tokens.GetAchievementNameToken(MimicMasteryAchievement.identifier),
+                MimicSurvivor.instance.assetBundle.LoadAsset<Sprite>("texMasteryAchievement"));
         }
     }
 }

@@ -2,9 +2,9 @@
 using RoR2.CharacterAI;
 using UnityEngine;
 
-namespace HenryMod.Survivors.Henry
+namespace MimicMod.Survivors.Mimic
 {
-    public static class HenryAI
+    public static class MimicAI
     {
         public static void Init(GameObject bodyPrefab, string masterName)
         {

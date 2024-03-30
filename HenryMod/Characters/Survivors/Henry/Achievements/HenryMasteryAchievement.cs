@@ -1,16 +1,16 @@
 ﻿using RoR2;
-using HenryMod.Modules.Achievements;
+using MimicMod.Modules.Achievements;
 
-namespace HenryMod.Survivors.Henry.Achievements
+namespace MimicMod.Survivors.Mimic.Achievements
 {
     //automatically creates language tokens "ACHIEVMENT_{identifier.ToUpper()}_NAME" and "ACHIEVMENT_{identifier.ToUpper()}_DESCRIPTION" 
     [RegisterAchievement(identifier, unlockableIdentifier, null, null)]
-    public class HenryMasteryAchievement : BaseMasteryAchievement
+    public class MimicMasteryAchievement : BaseMasteryAchievement
     {
-        public const string identifier = HenrySurvivor.HENRY_PREFIX + "masteryAchievement";
-        public const string unlockableIdentifier = HenrySurvivor.HENRY_PREFIX + "masteryUnlockable";
+        public const string identifier = MimicSurvivor.Mimic_PREFIX + "masteryAchievement";
+        public const string unlockableIdentifier = MimicSurvivor.Mimic_PREFIX + "masteryUnlockable";
 
-        public override string RequiredCharacterBody => HenrySurvivor.instance.bodyName;
+        public override string RequiredCharacterBody => MimicSurvivor.instance.bodyName;
 
         //difficulty coeff 3 is monsoon. 3.5 is typhoon for grandmastery skins
         public override float RequiredDifficultyCoefficient => 3;

@@ -2,11 +2,11 @@
 using BepInEx.Configuration;
 using UnityEngine;
 
-namespace HenryMod.Modules
+namespace MimicMod.Modules
 {
     public static class Config
     {
-        public static ConfigFile MyConfig = HenryPlugin.instance.Config;
+        public static ConfigFile MyConfig = MimicPlugin.instance.Config;
 
         /// <summary>
         /// automatically makes config entries for disabling survivors
