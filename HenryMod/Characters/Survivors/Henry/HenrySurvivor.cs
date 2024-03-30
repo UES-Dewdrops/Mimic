@@ -6,7 +6,6 @@ using MimicMod.SkillStates.Secondary;
 using MimicMod.SkillStates.Special;
 using MimicMod.SkillStates.Utility;
 using MimicMod.Survivors.Mimic.Components;
-using MimicMod.Survivors.Mimic.SkillStates;
 using RoR2;
 using RoR2.Skills;
 using System;
@@ -19,7 +18,7 @@ namespace MimicMod.Survivors.Mimic
     {
         public override string assetBundleName => "mimicassetbundle"; 
 
-        public override string bodyName => "MimicBody"; 
+        public override string bodyName => "HenryBody"; 
 
         public override string masterName => "MimicMonsterMaster";
 

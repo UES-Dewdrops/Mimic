@@ -1,4 +1,5 @@
 ﻿using EntityStates;
+using MimicMod.Survivors.Mimic;
 using RoR2;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -34,7 +35,7 @@ namespace MimicMod.SkillStates.Utility
             base.OnEnter();
             base.characterBody.bodyFlags |= CharacterBody.BodyFlags.IgnoreFallDamage;
 
-            if (NetworkServer.active && base.characterBody.HasBuff(Modules.Buffs.escapeBuff)) {
+            if (NetworkServer.active && base.characterBody.HasBuff(MimicBuffs.escapeBuff)) {
                 escapeBoost = 3f;
             } else {
                 escapeBoost = 1f;

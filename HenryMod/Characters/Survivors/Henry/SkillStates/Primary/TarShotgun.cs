@@ -44,7 +44,7 @@ namespace MimicMod.SkillStates.Primary
 
             if (NetworkServer.active && numHurtBoxes > 0)
             {
-                base.characterBody.AddTimedBuff(Modules.Buffs.escapeBuff, 2f);
+                base.characterBody.AddTimedBuff(MimicBuffs.escapeBuff, 2f);
             }
 
 
